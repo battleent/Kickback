@@ -1,4 +1,6 @@
 # Kickback
+[![license](https://img.shields.io/badge/license-apache%202.0-green.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
+[![Build Status](https://travis-ci.org/skydoves/Kickback.svg?branch=master)](https://travis-ci.org/skydoves/Kickback) </br>
 This Java & Android library helps to manage static data more structurally using annotation processor.
 
 ## Including in your project
