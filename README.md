@@ -74,7 +74,7 @@ Kickback_Profile.getName();
 Kickback_Profile.freeName();
 ```
 In Android project, we can set LifecycleObserver and get LifecycleObserver from box class.<br>
-Using by these methods, we can more prevent from OOM on your project.
+Using by these methods, we can more prevent our project from OOM.
 ```java
 kickback_profile.setLifecycleObserver(LifecycleOwner lifecycleOwner)
 kickback_profile.getLifecycleObserver()
