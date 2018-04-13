@@ -16,7 +16,7 @@ public class SecondActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
 
-        Kickback_SecondActivityExtra.freeAll();
+        printKickback();
     }
 
     @Override

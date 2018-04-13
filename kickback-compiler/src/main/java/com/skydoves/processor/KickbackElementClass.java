@@ -39,6 +39,7 @@ public class KickbackElementClass {
     public boolean isPrimitive = false;
     public final boolean isWeak;
     public final boolean isSoft;
+    public boolean isObjectField = false;
 
     public KickbackElementClass(VariableElement variableElement, Elements elementUtils) throws VerifyException {
         KickbackElement kickbackElement = variableElement.getAnnotation(KickbackElement.class);

@@ -19,8 +19,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        printKickback();
-
         Kickback_SecondActivityExtra.setName("skydoves");
         Kickback_SecondActivityExtra.setPassword(1234);
 

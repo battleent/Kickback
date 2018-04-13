@@ -2,6 +2,7 @@ package com.skydoves.kickbackdemo;
 
 import com.skydoves.kickback.KickbackBox;
 import com.skydoves.kickback.KickbackElement;
+import com.skydoves.kickback.KickbackFunction;
 import com.skydoves.kickback.Weak;
 
 /**
@@ -10,11 +11,21 @@ import com.skydoves.kickback.Weak;
  */
 
 @KickbackBox(name = "SecondActivityExtra")
-abstract public class SecondActivityExtrasBox {
+public class SecondActivityExtrasBox {
     @KickbackElement(name = "name")
     String userName;
 
     @Weak
     @KickbackElement(name = "password")
     final int userPassword = 0;
+
+    @KickbackFunction(keyname = "name")
+    public String setNameFunction(String userName) {
+        return userName + "!!!";
+    }
+
+    @KickbackFunction(keyname = "name")
+    public String getNameFunction(String userName) {
+        return userName + " Hello";
+    }
 }

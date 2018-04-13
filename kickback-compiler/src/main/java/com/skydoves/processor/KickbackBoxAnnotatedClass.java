@@ -19,16 +19,17 @@ package com.skydoves.processor;
 import com.google.common.base.Strings;
 import com.google.common.base.VerifyException;
 import com.skydoves.kickback.KickbackBox;
+import com.skydoves.kickback.KickbackFunction;
 import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterSpec;
-import com.squareup.javapoet.TypeName;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
@@ -42,7 +43,14 @@ public class KickbackBoxAnnotatedClass {
     public final String boxName;
 
     public final List<KickbackElementClass> kickbackElementList;
-    public final List<TypeElement> kickbackInjectionList;
+
+    public final List<String> keyNameFields;
+    public final Map<String, KickbackElementClass> keyFieldMap;
+    public final Map<String, Element> setterFunctionsList;
+    public final Map<String, Element> getterFunctionsList;
+
+    private static final String SETTER_PREFIX = "set";
+    private static final String GETTER_PREFIX = "get";
 
     public KickbackBoxAnnotatedClass(TypeElement annotatedElement, Elements elementUtils) throws VerifyException {
         KickbackBox kickbackBox = annotatedElement.getAnnotation(KickbackBox.class);
@@ -52,7 +60,10 @@ public class KickbackBoxAnnotatedClass {
         this.clazzName = annotatedElement.getSimpleName().toString();
         this.boxName = Strings.isNullOrEmpty(kickbackBox.name()) ? StringUtils.toUpperCamel(this.clazzName) : kickbackBox.name();
         this.kickbackElementList =  new ArrayList<>();
-        this.kickbackInjectionList = new ArrayList<>();
+        this.keyNameFields = new ArrayList<>();
+        this.keyFieldMap = new HashMap<>();
+        this.setterFunctionsList = new HashMap<>();
+        this.getterFunctionsList = new HashMap<>();
 
         Map<String, String> checkMap = new HashMap<>();
         annotatedElement.getEnclosedElements().stream()
@@ -67,24 +78,36 @@ public class KickbackBoxAnnotatedClass {
 
                     checkMap.put(kickbackElement.elementName, kickbackElement.clazzName);
                     kickbackElementList.add(kickbackElement);
+                    keyNameFields.add(kickbackElement.elementName);
+                    keyFieldMap.put(kickbackElement.elementName, kickbackElement);
                 });
 
         annotatedElement.getEnclosedElements().stream()
-                .filter(element -> element instanceof ExecutableElement)
-                .filter(element -> !element.getSimpleName().equals(annotatedElement.getSimpleName()))
-                .skip(1)
-                .map(element -> (ExecutableElement) element)
-                .forEach(method -> {
-                    MethodSpec methodSpec = MethodSpec.overriding(method).build();
-                    if(methodSpec.returnType != TypeName.get(Void.TYPE)) {
-                        throw new VerifyException(String.format("return type must be void : '%s' method with return type '%s'", methodSpec.name, methodSpec.returnType));
-                    } else if(methodSpec.parameters.size() > 1 || methodSpec.parameters.size() == 0) {
-                        throw new VerifyException(String.format("length of parameter must be 1 : '%s' method with parameters '%s'", methodSpec.name, methodSpec.parameters.toString()));
-                    }
+                .filter(function -> !function.getKind().isField() && function.getModifiers().contains(Modifier.PUBLIC) &&
+                        function.getAnnotation(KickbackFunction.class) != null).forEach(function -> {
+            KickbackFunction annotation = function.getAnnotation(KickbackFunction.class);
+            String keyName = StringUtils.toUpperCamel(annotation.keyname());
+            if(keyNameFields.contains(keyName)) {
+                keyFieldMap.get(keyName).isObjectField = true;
+                if(function.getSimpleName().toString().startsWith(SETTER_PREFIX)) {
+                    setterFunctionsList.put(keyName, function);
+                } else if(function.getSimpleName().toString().startsWith(GETTER_PREFIX)) {
+                    getterFunctionsList.put(keyName, function);
+                } else {
+                    throw new VerifyException(String.format("PreferenceFunction's prefix should startWith 'get' or 'put' : %s", function.getSimpleName()));
+                }
+            } else {
+                throw new VerifyException(String.format("keyName '%s' is not exist in entity.", keyName));
+            }
 
-                    ParameterSpec parameterSpec = methodSpec.parameters.get(0);
-                    TypeElement injectedElement = elementUtils.getTypeElement(parameterSpec.type.toString());
-                    kickbackInjectionList.add(injectedElement);
-                });
+            MethodSpec methodSpec = MethodSpec.overriding((ExecutableElement) function).build();
+            if(methodSpec.parameters.size() > 1) {
+                throw new VerifyException("PreferenceFunction should has one parameter");
+            } else if(!methodSpec.parameters.get(0).type.equals(keyFieldMap.get(keyName).typeName)) {
+                throw new VerifyException(String.format("parameter '%s''s type should be %s.", methodSpec.parameters.get(0).name, keyFieldMap.get(keyName).typeName));
+            } else if(!methodSpec.returnType.equals(keyFieldMap.get(keyName).typeName)) {
+                throw new VerifyException(String.format("method '%s''s return type should be %s.", methodSpec.name, keyFieldMap.get(keyName).typeName));
+            }
+        });
     }
 }
