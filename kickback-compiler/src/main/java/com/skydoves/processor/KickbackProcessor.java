@@ -104,8 +104,6 @@ public class KickbackProcessor extends AbstractProcessor {
             throw new IllegalAccessException("class modifier can not be final");
         } else if(annotatedType.getModifiers().contains(Modifier.PRIVATE)) {
             throw new IllegalAccessException("class modifier can not be private");
-        } else if(!annotatedType.getModifiers().contains(Modifier.ABSTRACT)) {
-            throw new IllegalAccessException("class modifier must contain abstract");
         }
     }
 
