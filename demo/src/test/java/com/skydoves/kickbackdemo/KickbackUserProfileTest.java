@@ -17,70 +17,71 @@ import static org.hamcrest.core.Is.is;
 
 public class KickbackUserProfileTest {
 
+    private Kickback_Profile box_profile = Kickback_Profile.getInstance();
     private static final String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9";
     private static final String uuid = "00001234-0000-0000-0000-000123456789";
 
     @Test
     public void initializeKickbackElementTest() {
-        assertThat(Kickback_Profile.getVisits(), is(1));
-        assertThat(Kickback_Profile.getName(), is("skydoves"));
-        assertThat(Kickback_Profile.getPassword(), is(1234));
-        Assert.assertNull(Kickback_Profile.getDog());
+        assertThat(box_profile.getVisits(), is(1));
+        assertThat(box_profile.getName(), is("skydoves"));
+        assertThat(box_profile.getPassword(), is(1234));
+        Assert.assertNull(box_profile.getDog());
     }
 
     @Test
     public void setKickbackElementTest() {
-        Kickback_Profile.setVisits(10);
-        Kickback_Profile.setName("Kickback");
-        Kickback_Profile.setPassword(4321);
-        Kickback_Profile.setDog(new Dog("Akita", 4, "White"));
+        box_profile.setVisits(10);
+        box_profile.setName("Kickback");
+        box_profile.setPassword(4321);
+        box_profile.setDog(new Dog("Akita", 4, "White"));
 
-        assertThat(Kickback_Profile.getVisits(), is(10));
-        assertThat(Kickback_Profile.getName(), is("Kickback"));
-        assertThat(Kickback_Profile.getPassword(), is(4321));
-        assertThat(Kickback_Profile.getDog().getBreed(), is("Akita"));
-        assertThat(Kickback_Profile.getDog().getAge(), is(4));
-        assertThat(Kickback_Profile.getDog().getColor(), is("White"));
+        assertThat(box_profile.getVisits(), is(10));
+        assertThat(box_profile.getName(), is("Kickback"));
+        assertThat(box_profile.getPassword(), is(4321));
+        assertThat(box_profile.getDog().getBreed(), is("Akita"));
+        assertThat(box_profile.getDog().getAge(), is(4));
+        assertThat(box_profile.getDog().getColor(), is("White"));
     }
 
     @Test
     public void freeKickbackElementTest() {
-        Kickback_Profile.freeVisits();
-        Kickback_Profile.freeName();
-        Kickback_Profile.freePassword();
-        Kickback_Profile.freeDog();
+        box_profile.freeVisits();
+        box_profile.freeName();
+        box_profile.freePassword();
+        box_profile.freeDog();
 
-        Assert.assertNull(Kickback_Profile.getVisits());
-        Assert.assertNull(Kickback_Profile.getName());
-        Assert.assertNull(Kickback_Profile.getPassword());
-        Assert.assertNull(Kickback_Profile.getDog());
+        Assert.assertNull(box_profile.getVisits());
+        Assert.assertNull(box_profile.getName());
+        Assert.assertNull(box_profile.getPassword());
+        Assert.assertNull(box_profile.getDog());
     }
 
     @Test
     public void weakKickbackElementTest() {
-        Kickback_Profile.setPassword(4321);
-        Kickback_Profile.setSecondPassword(11111);
+        box_profile.setPassword(4321);
+        box_profile.setSecondPassword(11111);
 
-        Assert.assertNotNull(Kickback_Profile.getPassword());
-        Assert.assertNotNull(Kickback_Profile.getSecondPassword());
+        Assert.assertNotNull(box_profile.getPassword());
+        Assert.assertNotNull(box_profile.getSecondPassword());
 
         System.gc();
 
-        Assert.assertNull(Kickback_Profile.getPassword());
-        Assert.assertNull(Kickback_Profile.getSecondPassword());
+        Assert.assertNull(box_profile.getPassword());
+        Assert.assertNull(box_profile.getSecondPassword());
     }
 
     @Test
     public void softKickbackElementTest() {
-        Kickback_Profile.setDog(new Dog("Akita", 4, "White"));
-        Kickback_Profile.setUserPrivates(new UserPrivates(token, uuid));
+        box_profile.setDog(new Dog("Akita", 4, "White"));
+        box_profile.setUserPrivates(new UserPrivates(token, uuid));
 
-        Assert.assertNotNull(Kickback_Profile.getDog());
-        Assert.assertNotNull(Kickback_Profile.getUserPrivates());
+        Assert.assertNotNull(box_profile.getDog());
+        Assert.assertNotNull(box_profile.getUserPrivates());
 
         System.gc();
 
-        Assert.assertNotNull(Kickback_Profile.getDog());
-        Assert.assertNotNull(Kickback_Profile.getUserPrivates());
+        Assert.assertNotNull(box_profile.getDog());
+        Assert.assertNotNull(box_profile.getUserPrivates());
     }
 }

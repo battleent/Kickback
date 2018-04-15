@@ -1,10 +1,7 @@
 package com.skydoves.kickbackdemo;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 /**
@@ -12,27 +9,22 @@ import android.widget.Toast;
  * Copyright (c) 2018 battleent All rights reserved.
  */
 
-public class MainActivity extends AppCompatActivity {
+public class SecondActivity extends AppCompatActivity {
 
     Kickback_SecondActivityExtra box = Kickback_SecondActivityExtra.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_second);
 
-        box.setName("skydoves");
-        box.setPassword(1234);
+        printKickback();
+    }
 
-        startActivity(new Intent(this, SecondActivity.class));
-
-        Button button = findViewById(R.id.button0);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                printKickback();
-            }
-        });
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Kickback_SecondActivityExtra.freeAll();
     }
 
     private void printKickback() {

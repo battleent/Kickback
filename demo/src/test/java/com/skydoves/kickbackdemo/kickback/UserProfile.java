@@ -13,7 +13,7 @@ import com.skydoves.kickbackdemo.sample.UserPrivates;
  */
 
 @KickbackBox(name = "Profile")
-public abstract class UserProfile {
+public class UserProfile {
     final int visits = 1;
 
     @KickbackElement(name = "name")
