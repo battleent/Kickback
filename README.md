@@ -1,7 +1,8 @@
 # Kickback
 [![license](https://img.shields.io/badge/license-apache%202.0-green.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 [![Build Status](https://travis-ci.org/skydoves/Kickback.svg?branch=master)](https://travis-ci.org/skydoves/Kickback) </br>
-This Android library helps to manage static data more structurally by Kickback processor.
+This Android library helps to manage static data more structurally by Kickback processor.<br>
+It let you persist data statically, get and free easily.
 
 ## Including in your project
 #### build.gradle
@@ -53,8 +54,8 @@ Kickback_Profile box_profile = Kickback_Profile.getInstance();
 Then we can put, take out or free at memory into our new generated box class.
 ```java
 Kickback_Profile box_profile = Kickback_Profile.getInstance();
-box_profile.setPassword(4321);
-box_profile.setDog(new Dog("Akita", 4, "White")); // set "Dog" object element
+box_profile.setPassword(4321); // persist "Password" element data
+box_profile.setDog(new Dog("Akita", 4, "White")); // persist "Dog" object element data
 box_profile.getName(); // get value of "Name" element
 box_profile.freeVisits() // free "Visit" element
 Kickback_Profile.freeAll(); // free all elements
@@ -79,8 +80,7 @@ public String getNameFunction(String userName) {
 ```
 
 ### Use in Android
-Sometimes we must invoke intent with extra data for passing data to next Activity. <br>
-In this case, we do not have to implement Parcerable object and __putExtra___ and __getExtras__.<br>
+Sometimes we must pass extra data for using the data next Activity. <br>
 
 ```java
 @KickbackBox(name = "SecondActivityExtra")
@@ -103,6 +103,34 @@ public class SecondActivityExtrasBox {
     }
 }
 ```
+Do not need to put Extra data in bundle.<br>
+In this case, we do not have to implement Parcerable object and __putExtra___ and __getExtras__.<br>
+Instead, Kickback persists data at the memory and you can free on the memory when you want.
+
+```java
+public class MainActivity extends AppCompatActivity {
+
+    Kickback_SecondActivityExtra box = Kickback_SecondActivityExtra.getInstance();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        box.setName("skydoves");
+        box.setPassword(1234);
+
+        Button button = findViewById(R.id.button0);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(this, SecondActivity.class));
+            }
+        });
+    }
+
+```
+
 After using data at next Activity, you can remove data from memory __onDestroy__
 
 ```java
