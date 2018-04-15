@@ -229,13 +229,13 @@ public class KickbackBoxGenerator {
         this.annotatedClazz.kickbackElementList.forEach(element -> {
             if(element.isWeak || element.isSoft) {
                 MethodSpec freeSpec = MethodSpec.methodBuilder(getFreePrefixName(element.elementName))
-                        .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                        .addModifiers(Modifier.PUBLIC)
                         .addStatement("$N.clear()", getFieldName(element.elementName))
                         .build();
                 freeSpecList.add(freeSpec);
             } else {
                 MethodSpec freeSpec = MethodSpec.methodBuilder(getFreePrefixName(element.elementName))
-                        .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                        .addModifiers(Modifier.PUBLIC)
                         .addStatement("$N = null", getFieldName(element.elementName))
                         .build();
                 freeSpecList.add(freeSpec);
@@ -270,7 +270,7 @@ public class KickbackBoxGenerator {
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC);
 
          this.annotatedClazz.kickbackElementList.forEach(element ->
-             builder.addStatement(getFreePrefixName(element.elementName) + "()"));
+             builder.addStatement(FIELD_INSTANCE + "." + getFreePrefixName(element.elementName) + "()"));
 
          return builder.build();
     }
