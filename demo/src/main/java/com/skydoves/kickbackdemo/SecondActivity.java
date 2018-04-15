@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 public class SecondActivity extends AppCompatActivity {
 
+    Kickback_SecondActivityExtra box = Kickback_SecondActivityExtra.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,6 +28,6 @@ public class SecondActivity extends AppCompatActivity {
     }
 
     private void printKickback() {
-        Toast.makeText(this, Kickback_SecondActivityExtra.getName() + " :" + Kickback_SecondActivityExtra.getPassword(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, box.getName() + " :" + box.getPassword(), Toast.LENGTH_SHORT).show();
     }
 }

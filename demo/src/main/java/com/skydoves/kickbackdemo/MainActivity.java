@@ -14,13 +14,15 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
+    Kickback_SecondActivityExtra box = Kickback_SecondActivityExtra.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Kickback_SecondActivityExtra.setName("skydoves");
-        Kickback_SecondActivityExtra.setPassword(1234);
+        box.setName("skydoves");
+        box.setPassword(1234);
 
         startActivity(new Intent(this, SecondActivity.class));
 
@@ -34,6 +36,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void printKickback() {
-        Toast.makeText(this, Kickback_SecondActivityExtra.getName() + " :" + Kickback_SecondActivityExtra.getPassword(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, box.getName() + " :" + box.getPassword(), Toast.LENGTH_SHORT).show();
     }
 }

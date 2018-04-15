@@ -13,7 +13,7 @@ import com.skydoves.kickback.Weak;
 @KickbackBox(name = "SecondActivityExtra")
 public class SecondActivityExtrasBox {
     @KickbackElement(name = "name")
-    String userName;
+    final String userName = "skydoves";
 
     @Weak
     @KickbackElement(name = "password")
