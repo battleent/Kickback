@@ -18,6 +18,8 @@ publish {
 dependencies {
     compile project(':kickback')
     implementation 'com.google.auto.service:auto-service:1.0-rc3'
+    implementation 'com.google.android:android:4.1.1.4'
+    implementation 'com.android.support:support-annotations:27.1.1'
     implementation 'com.squareup:javapoet:1.9.0'
     implementation "android.arch.lifecycle:common-java8:1.1.1"
 }
