@@ -11,13 +11,12 @@ import android.widget.Toast;
 
 public class SecondActivity extends AppCompatActivity {
 
-    Kickback_SecondActivityExtra box = Kickback_SecondActivityExtra.getInstance();
+    private Kickback_SecondActivityExtra box = Kickback_SecondActivityExtra.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
-
         printKickback();
     }
 

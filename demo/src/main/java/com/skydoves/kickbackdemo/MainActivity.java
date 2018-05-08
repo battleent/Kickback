@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    Kickback_SecondActivityExtra box = Kickback_SecondActivityExtra.getInstance();
+    private Kickback_SecondActivityExtra box = Kickback_SecondActivityExtra.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
