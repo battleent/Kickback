@@ -18,6 +18,7 @@ package com.skydoves.processor;
 
 import com.google.common.base.Strings;
 import com.google.common.base.VerifyException;
+import com.skydoves.kickback.Keep;
 import com.skydoves.kickback.KickbackElement;
 import com.skydoves.kickback.Soft;
 import com.skydoves.kickback.Weak;
@@ -39,12 +40,14 @@ public class KickbackElementClass {
     public boolean isPrimitive = false;
     public final boolean isWeak;
     public final boolean isSoft;
+    public final boolean keep;
     public boolean isObjectField = false;
 
     public KickbackElementClass(VariableElement variableElement, Elements elementUtils) throws VerifyException {
         KickbackElement kickbackElement = variableElement.getAnnotation(KickbackElement.class);
         Weak weak = variableElement.getAnnotation(Weak.class);
         Soft soft = variableElement.getAnnotation(Soft.class);
+        Keep keep = variableElement.getAnnotation(Keep.class);
         PackageElement packageElement = elementUtils.getPackageOf(variableElement);
         this.variableElement = variableElement;
         this.packageName = packageElement.isUnnamed() ? null : packageElement.getQualifiedName().toString();
@@ -55,6 +58,8 @@ public class KickbackElementClass {
         else this.isWeak = false;
         if(soft != null) this.isSoft = true;
         else this.isSoft = false;
+        if(keep != null) this.keep = true;
+        else this.keep = false;
 
         if(kickbackElement != null) {
             this.elementName =  StringUtils.toUpperCamel(Strings.isNullOrEmpty(kickbackElement.name()) ? this.clazzName : kickbackElement.name());
