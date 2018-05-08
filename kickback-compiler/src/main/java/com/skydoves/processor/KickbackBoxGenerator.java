@@ -18,10 +18,13 @@ package com.skydoves.processor;
 
 import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.LifecycleOwner;
+import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
@@ -41,6 +44,7 @@ public class KickbackBoxGenerator {
     private final String FIELD_INSTANCE = "instance";
     private final String CLAZZ_PREFIX = "Kickback_";
     private final String FIELD_PREFIX = "kickback_";
+    private final String FIELD_PREFERENCE = "preference";
     private final String SETTER_PREFIX = "set";
     private final String GETTER_PREFIX = "get";
     private final String FREE_PREFIX = "free";
@@ -56,10 +60,12 @@ public class KickbackBoxGenerator {
                 .addModifiers(Modifier.PUBLIC)
                 .superclass(ClassName.get(annotatedClazz.annotatedElement))
                 .addSuperinterface(LifecycleObserver.class)
-                .addMethod(getConstructorSpec())
                 .addField(getInstanceFieldSpec())
-                .addMethod(getInstanceMethodSpec())
                 .addFields(getKickbackFields())
+                .addField(preferenceFieldSpec())
+                .addMethod(getConstructorSpec())
+                .addMethod(getInstanceMethodSpec())
+                .addMethod(initPersistMethodSpec())
                 .addMethods(getSetterMethodSpecs())
                 .addMethods(getGetterMethodSpecs())
                 .addMethods(getFreeMethodSpecs())
@@ -81,6 +87,10 @@ public class KickbackBoxGenerator {
         return FieldSpec.builder(getClassType(), FIELD_INSTANCE, Modifier.PRIVATE, Modifier.STATIC).build();
     }
 
+    private FieldSpec preferenceFieldSpec() {
+        return FieldSpec.builder(SharedPreferences.class, FIELD_PREFERENCE, Modifier.PRIVATE, Modifier.STATIC).build();
+    }
+
     private MethodSpec getInstanceMethodSpec() {
         return MethodSpec.methodBuilder("getInstance")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
@@ -88,6 +98,19 @@ public class KickbackBoxGenerator {
                 .addStatement("return " + FIELD_INSTANCE)
                 .returns(getClassType())
                 .build();
+    }
+
+    private MethodSpec initPersistMethodSpec() {
+        return MethodSpec.methodBuilder("initPersist")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .addParameter(ParameterSpec.builder(Context.class, "context").build())
+                .addStatement("$T impl = new $T()", getPreferenceFactoryImplClassName(), getPreferenceFactoryImplClassName())
+                .addStatement("if(" + FIELD_PREFERENCE + " == null) " + FIELD_PREFERENCE + " = impl.create(context)")
+                .build();
+    }
+
+    private ClassName getPreferenceFactoryImplClassName() {
+        return ClassName.get(annotatedClazz.packageName, annotatedClazz.boxName + "PreferencesFactoryImpl");
     }
 
     private List<FieldSpec> getKickbackFields() {
