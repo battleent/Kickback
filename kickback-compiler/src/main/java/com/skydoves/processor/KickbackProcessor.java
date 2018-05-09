@@ -83,6 +83,7 @@ public class KickbackProcessor extends AbstractProcessor {
             KickbackBoxAnnotatedClass annotatedClazz = new KickbackBoxAnnotatedClass(annotatedType, processingEnv.getElementUtils());
             checkDuplicatedKickbackBox(annotatedClazz);
             generateProcessKickbackBox(annotatedClazz);
+            generatePreferencesFactoryImpl(annotatedClazz);
         } catch (VerifyException e) {
             showErrorLog(e.getMessage(), annotatedType);
         }
@@ -94,6 +95,15 @@ public class KickbackProcessor extends AbstractProcessor {
             JavaFile.builder(annotatedClazz.packageName, generatedSpec).build().writeTo(processingEnv.getFiler());
         } catch (IOException e) {
             // ignore ;)
+        }
+    }
+
+    private void generatePreferencesFactoryImpl(KickbackBoxAnnotatedClass annotatedClazz) {
+        try {
+            TypeSpec generatedSpec = (new PreferencesFactoryImplGenerator(annotatedClazz)).generate();
+            JavaFile.builder(annotatedClazz.packageName, generatedSpec).build().writeTo(processingEnv.getFiler());
+        } catch (IOException e) {
+            // ignore :)
         }
     }
 
