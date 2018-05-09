@@ -116,45 +116,47 @@ public class KickbackBoxGenerator {
     private List<FieldSpec> getKickbackFields() {
         List<FieldSpec> fieldSpecList = new ArrayList<>();
         this.annotatedClazz.kickbackElementList.forEach(element -> {
-            if(element.isWeak) {
-                TypeName elementWild = WildcardTypeName.subtypeOf(element.typeName);
-                TypeName weakTypeName = ParameterizedTypeName.get(ClassName.get(WeakReference.class), elementWild);
-                FieldSpec.Builder builder = FieldSpec.builder(weakTypeName, getFieldName(element.elementName), Modifier.PRIVATE, Modifier.STATIC);
-                if (element.value != null) {
-                    if (element.isPrimitive) {
-                        builder.initializer("new $T($L)", WeakReference.class, element.value);
-                    } else if (element.value instanceof String) {
-                        builder.initializer("new $T($S)", WeakReference.class,  element.value);
+            if(!element.keep) {
+                if (element.isWeak) {
+                    TypeName elementWild = WildcardTypeName.subtypeOf(element.typeName);
+                    TypeName weakTypeName = ParameterizedTypeName.get(ClassName.get(WeakReference.class), elementWild);
+                    FieldSpec.Builder builder = FieldSpec.builder(weakTypeName, getFieldName(element.elementName), Modifier.PRIVATE, Modifier.STATIC);
+                    if (element.value != null) {
+                        if (element.isPrimitive) {
+                            builder.initializer("new $T($L)", WeakReference.class, element.value);
+                        } else if (element.value instanceof String) {
+                            builder.initializer("new $T($S)", WeakReference.class, element.value);
+                        }
+                    } else {
+                        builder.initializer("new $T(null)", SoftReference.class);
                     }
-                }  else {
-                    builder.initializer("new $T(null)", SoftReference.class);
-                }
-                fieldSpecList.add(builder.build());
-            } else if(element.isSoft) {
-                TypeName elementWild = WildcardTypeName.subtypeOf(element.typeName);
-                TypeName softTypeName = ParameterizedTypeName.get(ClassName.get(SoftReference.class), elementWild);
-                FieldSpec.Builder builder = FieldSpec.builder(softTypeName, getFieldName(element.elementName), Modifier.PRIVATE, Modifier.STATIC);
-                if (element.value != null) {
-                    if (element.isPrimitive) {
-                        builder.initializer("new $T($L)", SoftReference.class, element.value);
-                    } else if (element.value instanceof String) {
-                        builder.initializer("new $T($S)", SoftReference.class,  element.value);
+                    fieldSpecList.add(builder.build());
+                } else if (element.isSoft) {
+                    TypeName elementWild = WildcardTypeName.subtypeOf(element.typeName);
+                    TypeName softTypeName = ParameterizedTypeName.get(ClassName.get(SoftReference.class), elementWild);
+                    FieldSpec.Builder builder = FieldSpec.builder(softTypeName, getFieldName(element.elementName), Modifier.PRIVATE, Modifier.STATIC);
+                    if (element.value != null) {
+                        if (element.isPrimitive) {
+                            builder.initializer("new $T($L)", SoftReference.class, element.value);
+                        } else if (element.value instanceof String) {
+                            builder.initializer("new $T($S)", SoftReference.class, element.value);
+                        }
+                    } else {
+                        builder.initializer("new $T(null)", SoftReference.class);
                     }
+                    fieldSpecList.add(builder.build());
                 } else {
-                    builder.initializer("new $T(null)", SoftReference.class);
-                }
-                fieldSpecList.add(builder.build());
-            }  else {
-                FieldSpec.Builder builder = FieldSpec.builder(element.typeName, getFieldName(element.elementName), Modifier.PRIVATE, Modifier.STATIC);
+                    FieldSpec.Builder builder = FieldSpec.builder(element.typeName, getFieldName(element.elementName), Modifier.PRIVATE, Modifier.STATIC);
 
-                if (element.value != null) {
-                    if (element.isPrimitive) {
-                        builder.initializer("$L", element.value);
-                    } else if (element.value instanceof String) {
-                        builder.initializer("$S", element.value);
+                    if (element.value != null) {
+                        if (element.isPrimitive) {
+                            builder.initializer("$L", element.value);
+                        } else if (element.value instanceof String) {
+                            builder.initializer("$S", element.value);
+                        }
                     }
+                    fieldSpecList.add(builder.build());
                 }
-                fieldSpecList.add(builder.build());
             }
         });
         return fieldSpecList;
@@ -210,18 +212,31 @@ public class KickbackBoxGenerator {
     private List<MethodSpec> getGetterMethodSpecs() {
         List<MethodSpec> getterSpecList = new ArrayList<>();
         this.annotatedClazz.kickbackElementList.forEach(element -> {
-            if(element.isWeak || element.isSoft) {
+            /*if(element.keep) {
+                MethodSpec.Builder builder = MethodSpec.methodBuilder(getGetterPrefixName(element.elementName))
+                        .addModifiers(Modifier.PUBLIC)
+                        .returns(element.typeName);
+
+                if(element.isPrimitive) { // primitive type check
+
+                } else { // object type check
+
+                }
+                getterSpecList.add(builder.build());
+            } */
+
+            if (element.isWeak || element.isSoft) {
                 MethodSpec getterSpec = MethodSpec.methodBuilder(getGetterPrefixName(element.elementName))
                         .addModifiers(Modifier.PUBLIC)
-                        .returns(element.typeName)
                         .addStatement(getReferenceGetterStatement(element), getFieldName(element.elementName))
+                        .returns(element.typeName)
                         .build();
                 getterSpecList.add(getterSpec);
             } else {
                 MethodSpec getterSpec = MethodSpec.methodBuilder(getGetterPrefixName(element.elementName))
                         .addModifiers(Modifier.PUBLIC)
-                        .returns(element.typeName)
                         .addStatement(getGetterStatement(element), getFieldName(element.elementName))
+                        .returns(element.typeName)
                         .build();
                 getterSpecList.add(getterSpec);
             }
