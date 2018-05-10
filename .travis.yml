@@ -10,3 +10,12 @@ android:
     - extra-google-m2repository
 jdk:
   - oraclejdk8
+
+notifications:
+  email: false
+
+cache:
+  - $HOME/.gradle
+
+script:
+  - chmod +x ./gradlew
