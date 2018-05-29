@@ -22,6 +22,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Marks at a field that should to create as SoftReference Object.
+ *
+ * It persists data until cleared by Garbage Collector by SoftReference.
+ * For preventing OutOfMemoryError, free() should be called when the Object needed anymore.
+ */
 @Documented
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.CLASS)

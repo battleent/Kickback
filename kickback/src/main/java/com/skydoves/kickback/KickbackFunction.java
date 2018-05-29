@@ -24,6 +24,13 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.CLASS;
 
+/**
+ * Marks at a method that want to process a function before persist or get data.
+ *
+ * processes getter and setter functions.
+ * "keyname" value determines a target. The target should be a keyName.
+ * Function's name should start with "set" or "get" prefix.
+ */
 @Documented
 @Target(METHOD)
 @Retention(CLASS)

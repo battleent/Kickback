@@ -26,6 +26,9 @@ public class MainActivity extends AppCompatActivity {
 
         startActivity(new Intent(this, SecondActivity.class));
 
+        // init preference persist
+        Kickback_SecondActivityExtra.initPersist(this);
+
         Button button = findViewById(R.id.button0);
         button.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -22,6 +22,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Marks at a field that should to create as WeakReference Object.
+ *
+ * It persists data until cleared by Garbage Collector by WeakReference.
+ *
+ */
 @Documented
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.CLASS)

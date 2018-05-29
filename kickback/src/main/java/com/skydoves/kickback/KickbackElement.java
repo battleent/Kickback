@@ -22,6 +22,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Marks at a field that want renames the object's name on your taste.
+ *
+ * If not annotated, the default name of the element variable will be field name.
+ */
 @Documented
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.CLASS)
